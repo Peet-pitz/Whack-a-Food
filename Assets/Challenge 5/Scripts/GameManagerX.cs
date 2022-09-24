@@ -9,11 +9,14 @@ public class GameManagerX : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI timerText;
+
     public GameObject titleScreen;
     public Button restartButton; 
 
     public List<GameObject> targetPrefabs;
 
+    public int timeLeft = 60;
     private int score;
     private float spawnRate = 1.5f;
     public bool isGameActive;
@@ -31,6 +34,7 @@ public class GameManagerX : MonoBehaviour
         score = 0;
         UpdateScore(0);
         titleScreen.SetActive(false);
+        InvokeRepeating("GameTimer", 1, 1);
     }
 
     // While game is active spawn a random target
@@ -73,12 +77,28 @@ public class GameManagerX : MonoBehaviour
         scoreText.text = "score: " + score;
     }
 
+    // Add game timer countdown 
+    void GameTimer()
+    {
+        if(timeLeft > 0)
+        {
+            timeLeft--;
+        }
+        else if(timeLeft <= 0)
+        {
+            GameOver();
+        }
+
+        timerText.text = "Time: " + timeLeft;
+    }
+
     // Stop game, bring up game over text and restart button
     public void GameOver()
     {
         gameOverText.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
         isGameActive = false;
+        CancelInvoke();
     }
 
     // Restart game by reloading the scene
